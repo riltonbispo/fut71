@@ -1,9 +1,9 @@
-import { Header } from './_components/Header'
+import Ranking from './_components/Ranking'
 
 export default function Home() {
   return (
-    <main className="">
-      <Header />
+    <main>
+      <Ranking />
     </main>
   )
 }
