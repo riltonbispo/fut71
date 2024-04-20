@@ -22,7 +22,7 @@ export const DetailsPlayers = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Destaques</CardTitle>
+        <CardTitle>Jogadores em destaques</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
