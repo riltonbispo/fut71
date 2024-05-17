@@ -29,21 +29,19 @@ const formSchema = z.object({
       }),
     )
     .min(11, { message: 'Insira pelo menos 11 jogadores' }),
-  logo: z
-    .any()
-    .refine(
-      (files) => {
-        return Array.from(files).every((file) => file instanceof File)
-      },
-      { message: 'Expected a file' },
-    )
-    .refine(
-      (files) =>
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type as File),
-        ),
-      'Only these types are allowed .jpg, .jpeg, .png and .webp',
-    ),
+  logo: z.any().refine(
+    (files) => {
+      return Array.from(files).every((file) => file instanceof File)
+    },
+    { message: 'Expected a file' },
+  ),
+  // .refine(
+  //   (files) =>
+  //     Array.from(files).every((file) =>
+  //       ACCEPTED_IMAGE_TYPES.includes(file.type),
+  //     ),
+  //   'Only these types are allowed .jpg, .jpeg, .png and .webp',
+  // ),
 })
 
 export const FormRegisterTeam = () => {
