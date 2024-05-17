@@ -73,7 +73,7 @@ export const FormRegisterTeam = () => {
             <FormItem>
               <FormLabel>Nome do time</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Meu Time" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
