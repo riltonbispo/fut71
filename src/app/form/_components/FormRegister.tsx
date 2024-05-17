@@ -40,7 +40,7 @@ const formSchema = z.object({
     .refine(
       (files) =>
         Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
+          ACCEPTED_IMAGE_TYPES.includes(file.type as File),
         ),
       'Only these types are allowed .jpg, .jpeg, .png and .webp',
     ),
