@@ -16,7 +16,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
 
-const ACCEPTED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png', '.webp']
+// const ACCEPTED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png', '.webp']
 
 const formSchema = z.object({
   name: z.string().min(2, {
