@@ -16,7 +16,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
 
-// const ACCEPTED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png', '.webp']
+const MAX_FILE_SIZE = 5000000
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -29,19 +29,12 @@ const formSchema = z.object({
       }),
     )
     .min(11, { message: 'Insira pelo menos 11 jogadores' }),
-  logo: z.any().refine(
-    (files) => {
-      return Array.from(files).every((file) => file instanceof File)
-    },
-    { message: 'Expected a file' },
-  ),
-  // .refine(
-  //   (files) =>
-  //     Array.from(files).every((file) =>
-  //       ACCEPTED_IMAGE_TYPES.includes(file.type),
-  //     ),
-  //   'Only these types are allowed .jpg, .jpeg, .png and .webp',
-  // ),
+  logo: z.instanceof(File).refine((file) => {
+    return !file || file.size <= MAX_FILE_SIZE
+  }, 'arquivo menor'),
+  file: z
+    .instanceof(FileList)
+    .refine((file) => file?.length === 1, 'File is required.'),
 })
 
 export const FormRegisterTeam = () => {
@@ -60,6 +53,8 @@ export const FormRegisterTeam = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
   }
+
+  const fileRef = form.register('file')
 
   return (
     <Form {...form}>
@@ -112,25 +107,18 @@ export const FormRegisterTeam = () => {
         </div>
         <FormField
           control={form.control}
-          name="logo"
-          render={({ field: { onChange, ...fieldProps } }) => (
-            <FormItem>
-              <FormLabel>Picture</FormLabel>
-              <FormDescription>Adicione a logo do seu time</FormDescription>
-              <FormControl>
-                <Input
-                  {...fieldProps}
-                  placeholder="Picture"
-                  type="file"
-                  accept="image/*, application/pdf"
-                  onChange={(event) =>
-                    onChange(event.target.files && event.target.files[0])
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          name="file"
+          render={() => {
+            return (
+              <FormItem>
+                <FormLabel>File</FormLabel>
+                <FormControl>
+                  <Input type="file" placeholder="shadcn" {...fileRef} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
         />
         <Button type="submit" className="w-full">
           Cadastrar
