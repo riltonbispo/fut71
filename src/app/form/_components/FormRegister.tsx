@@ -16,8 +16,6 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
 
-const MAX_FILE_SIZE = 5000000
-
 const formSchema = z.object({
   name: z.string().min(2, {
     message: 'O nome do time tem que ter mais de 2 caracteres',
@@ -29,12 +27,12 @@ const formSchema = z.object({
       }),
     )
     .min(11, { message: 'Insira pelo menos 11 jogadores' }),
-  logo: z.instanceof(File).refine((file) => {
-    return !file || file.size <= MAX_FILE_SIZE
-  }, 'arquivo menor'),
-  file: z
-    .instanceof(FileList)
-    .refine((file) => file?.length === 1, 'File is required.'),
+  // file: z
+  //   .instanceof(FileList)
+  //   .refine((file) => file?.length === 1, 'File is required.'),
+  resume: z.instanceof(File).refine((file) => file.size < 7000000, {
+    message: 'Seu currículo deve ter menos de 7 MB.',
+  }),
 })
 
 export const FormRegisterTeam = () => {
@@ -53,8 +51,6 @@ export const FormRegisterTeam = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
   }
-
-  const fileRef = form.register('file')
 
   return (
     <Form {...form}>
@@ -107,18 +103,25 @@ export const FormRegisterTeam = () => {
         </div>
         <FormField
           control={form.control}
-          name="file"
-          render={() => {
-            return (
-              <FormItem>
-                <FormLabel>File</FormLabel>
-                <FormControl>
-                  <Input type="file" placeholder="shadcn" {...fileRef} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )
-          }}
+          name="resume"
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { value, onChange, ...fieldProps } }) => (
+            <FormItem>
+              <FormLabel>Resume</FormLabel>
+              <FormControl>
+                <Input
+                  {...fieldProps}
+                  type="file"
+                  placeholder="shadcn"
+                  onChange={(event) =>
+                    onChange(event.target.files && event.target.files[0])
+                  }
+                />
+              </FormControl>
+              <FormDescription />
+              <FormMessage />
+            </FormItem>
+          )}
         />
         <Button type="submit" className="w-full">
           Cadastrar
