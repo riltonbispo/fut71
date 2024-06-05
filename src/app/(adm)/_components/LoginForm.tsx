@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -11,6 +12,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(false);
+
+  const handleEmailChange = (event: any) => {
+    const { value } = event.target;
+    setEmail(value);
+    setIsValidEmail(validateEmail(value));
+  }
+
+  const validateEmail = (email: any) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -22,7 +36,8 @@ export function LoginForm() {
       <CardContent className="grid gap-4">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" type="email" placeholder="m@example.com" required onChange={handleEmailChange} />
+          {isValidEmail || <span className="text-red-500">Invalid email</span>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
@@ -30,7 +45,7 @@ export function LoginForm() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Sign in</Button>
+        <Button className="w-full" disabled={!isValidEmail}>Sign in</Button>
       </CardFooter>
     </Card>
   )
