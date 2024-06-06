@@ -19,8 +19,36 @@ import { Label } from '@/components/ui/label'
 import { DateTimePicker } from '../_components/DateTimePicker'
 
 import MatchesMarked from '../_components/MatchesMarked'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useFieldArray, useForm } from 'react-hook-form'
+
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+  Form,
+} from '@/components/ui/form'
+
+const formSchema = z.object({
+  round: z.number().min(1, {
+    message: 'A rodada precisa ser preenchida',
+  }),
+})
+
 
 const MatchesPage = () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
+  }
+
   return (
     <div className="flex gap-6 flex-col lg:flex-row">
       <div className="w-full lg:max-w-96">
@@ -29,15 +57,24 @@ const MatchesPage = () => {
             <CardTitle>Agendar uma partida</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-5">
-              <div className="">
-                <Label htmlFor="email">Rodada</Label>
-                <Input
-                  type="number"
-                  id="round"
-                  placeholder="Numero da rodada"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="round"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rodada</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Numero da rodada" {...field} type='number'/>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
+              </form>
+            </Form>
+            <div className="space-y-5">
               <div className="flex items-center gap-5 ">
                 <div className="">
                   <Label htmlFor="category">Time da Casa</Label>

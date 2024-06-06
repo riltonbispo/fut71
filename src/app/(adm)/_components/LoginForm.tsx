@@ -1,28 +1,41 @@
-import { useState } from 'react';
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  Form,
+} from '@/components/ui/form'
+
+const formSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres")
+})
+
 
 export function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(false);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
 
-  const handleEmailChange = (event: any) => {
-    const { value } = event.target;
-    setEmail(value);
-    setIsValidEmail(validateEmail(value));
-  }
-
-  const validateEmail = (email: any) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
   }
 
   return (
@@ -30,23 +43,44 @@ export function LoginForm() {
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account.
+          Coloque suas credencias para o login
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required onChange={handleEmailChange} />
-          {isValidEmail || <span className="text-red-500">Invalid email</span>}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" required />
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="email@example.com" {...field} type='email' />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input placeholder="*********" {...field} type='password' />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">
+              Entrar
+            </Button>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full" disabled={!isValidEmail}>Sign in</Button>
-      </CardFooter>
     </Card>
   )
 }
